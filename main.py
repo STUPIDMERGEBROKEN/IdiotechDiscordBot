@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import descriptions as desc
 import checks
+<<<<<<< HEAD
 import random
 import simplify as s
 
@@ -10,6 +11,12 @@ extensions = ['cogs.giveaway', 'cogs.general', 'cogs.restricted', ]
 """
 Don't forget to re-add swear.py ^^
 """
+=======
+import cogs
+
+bot = commands.Bot(command_prefix='!', description=desc.main, pm_help=True)
+extensions = ['cogs.giveaway', 'cogs.general', 'cogs.restricted', 'cogs.stats', ]
+>>>>>>> refs/remotes/iScrE4m/master
 
 
 @bot.event
@@ -19,11 +26,33 @@ async def on_ready():
     await bot.change_status(game=discord.Game(name='!help'))
 
 
+@bot.event
+async def on_message(message):
+    if message.author is bot.user:
+        return
+
+    swear = bot.get_cog('Swear')
+
+    if swear is not None:
+        await swear.message(bot, message)
+
+    await bot.process_commands(message)
+
+
+@bot.event
+async def on_command(command, ctx):
+    stats = bot.get_cog('Stats')
+
+    if stats is not None:
+        await stats.on_command_p(command.name)
+
 @bot.command(hidden=True)
 @checks.is_scream()
 async def load(*, module: str):
     """
     Loads a module.
+
+    :param module: Module to be loaded, cogs.general -> from cogs folder general module
     """
     module = module.strip()
     try:
